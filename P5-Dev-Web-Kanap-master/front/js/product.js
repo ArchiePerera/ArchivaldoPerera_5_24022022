@@ -103,13 +103,13 @@ function addToCart(articles) {
         productLocalStorage.push(userProductArray);
         localStorage.setItem("userProducts", JSON.stringify(productLocalStorage));
 
-      } else if (productLocalStorage != null) {
+      } else {
 
         // Comportement si il existe des données dans le localStorage
 
         // Condition si le produit comporte le même Id et la même couleur. Méthode find dans le localStorage et comparaison avec les valeurs de l'objet userProductArray
 
-        let mappingProducts = productLocalStorage.find((el) => el.userProductColor === userProductColor && el.userProductColor === userProductColor)
+        let mappingProducts = productLocalStorage.find((el) => el.userProductId === userProductId && el.userProductColor === userProductColor)
 
         // Si la condition est vraie on additionne la quantité de l'objet du localStorage qui répond à la condition avec celle de la page en cours et on renvoie le tout au localStorage
 
@@ -141,6 +141,6 @@ function addToCart(articles) {
 
       alert("Veuillez renseigner la couleur et la quantité (max: 100) du produit sélectionné");
       
-    }
+    };
   }
-  )}
+  )};
