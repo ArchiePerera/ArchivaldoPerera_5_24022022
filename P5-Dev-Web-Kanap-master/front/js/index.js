@@ -18,7 +18,7 @@ function fillArticles() {
             
             const productLink = document.createElement("a");
             document.querySelector(".items").appendChild(productLink);
-            productLink.href = `../../front/html/product.html?id=${articles.indexOf(article)}`;
+            productLink.href = `../../front/html/product.html?id=${article._id}`;
 
             const productArticle = document.createElement("article");
             productLink.appendChild(productArticle);

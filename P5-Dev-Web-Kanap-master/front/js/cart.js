@@ -1,8 +1,8 @@
 const LOCALSTORAGE = JSON.parse(localStorage.getItem("userProducts"));
-
 const PRODUCTS_URL = "http://localhost:3000/api/products/";
 
 const displayCard = document.getElementById("cart__items");
+const displayQty = document.getElementsByClassName("itemQuantity");
 
 let price = 0;
 let quantity = [];
@@ -18,28 +18,24 @@ function displayBasket() {
     .then((catchArticles) => catchArticles.json())
     .then(function (data) {
       const articles = data;
-      console.log(data);
-      // console.log(LOCALSTORAGE)
 
       if (LOCALSTORAGE !== null) {
         for (let product of LOCALSTORAGE) {
+          find = articles.find((item) => item._id === product.userProductId);
+
           displayCard.innerHTML += `
-            <article class="cart__item" data-id="${
-              product.userProductId
-            }" data-color="${product.userProductColor}">
-                <div class="cart__item__img">
-                  <img src="${data[product.userProductId].imageUrl}" alt="${
-            data[product.userProductId].altTxt
+            <article class="cart__item" data-id="${find._id}" data-color="${
+            product.userProductColor
           }">
+                <div class="cart__item__img">
+                  <img src="${find.imageUrl}" alt="${find.altTxt}">
                 </div>
                 <div class="cart__item__content">
                   <div class="cart__item__content__description">
-                    <h2>${data[product.userProductId].name}</h2>
-                    <p>${data[product.userProductId].description}</p>
+                    <h2>${find.name}</h2>
+                    <p>${find.description}</p>
                     <p>${product.userProductColor}</p>
-                    <p>${
-                      data[product.userProductId].price * product.userProductQty
-                    } €</p>
+                    <p>${find.price * product.userProductQty} €</p>
                   </div>
                   <div class="cart__item__content__settings">
                     <div class="cart__item__content__settings__quantity">
@@ -56,7 +52,7 @@ function displayBasket() {
               </article>
             `;
 
-          price = data[product.userProductId].price * product.userProductQty;
+          price = find.price * product.userProductQty;
           totalSum.push(price);
 
           quantity.push(Number(product.userProductQty));
@@ -77,5 +73,4 @@ function displayBasket() {
       }
     });
 }
-
 displayBasket();
