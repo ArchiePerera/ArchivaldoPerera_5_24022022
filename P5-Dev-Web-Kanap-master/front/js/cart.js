@@ -8,11 +8,10 @@ const PRODUCTS_URL = "http://localhost:3000/api/products/";
 const displayCard = document.getElementById("cart__items");
 const displayQty = document.getElementsByClassName("itemQuantity");
 
-// Initialisation des variables à utiliser
+// Initialisation des variables à utiliser - fonction displayTotal
 
-let price = 0;
-let quantity = [];
-let totalSum = [];
+let sumPrice = [];
+let totalQuantity = [];
 
 // Appel de l'API pour rendre disponible la liste des articles
 
@@ -100,7 +99,7 @@ function displayBasket() {
 
           const productCardContentPrice = document.createElement('p');
           productCardContentDescription.appendChild(productCardContentPrice);
-          productCardContentPrice.innerHTML = userProductChoicePrice;
+          productCardContentPrice.innerHTML = userProductChoicePrice + ' €';
 
           // div Content Settings
 
@@ -125,7 +124,7 @@ function displayBasket() {
           const productCardSettingsQuantityInput = document.createElement('input');
           productCardSettingsQuantity.appendChild(productCardSettingsQuantityInput);
           productCardSettingsQuantityInput.setAttribute('type', 'number');
-          productCardSettingsQuantityInput.classList = 'itemQuentity';
+          productCardSettingsQuantityInput.classList = 'itemQuantity';
           productCardSettingsQuantityInput.setAttribute('name', 'itemQuantity');
           productCardSettingsQuantityInput.setAttribute('min', '1');
           productCardSettingsQuantityInput.setAttribute('max', '100');
@@ -143,80 +142,69 @@ function displayBasket() {
           productCardDeleteContainer.appendChild(productCardDeleteButton);
           productCardDeleteButton.innerHTML = 'Supprimer';
 
+          // Calcul des totaux
 
-
-
-
-
-
-
-          // displayCard.innerHTML += `
-          //   <article class="cart__item" data-id="${find._id}" data-color="${
-          //   product.userProductColor
-          // }">
-          //       <div class="cart__item__img">
-          //         <img src="${find.imageUrl}" alt="${find.altTxt}">
-          //       </div>
-          //       <div class="cart__item__content">
-          //         <div class="cart__item__content__description">
-          //           <h2>${find.name}</h2>
-          //           <p>${find.description}</p>
-          //           <p>${product.userProductColor}</p>
-          //           <p>${find.price * product.userProductQty} €</p>
-          //         </div>
-          //         <div class="cart__item__content__settings">
-          //           <div class="cart__item__content__settings__quantity">
-          //             <p>Qté : </p>
-          //             <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${
-          //               product.userProductQty
-          //             }">
-          //           </div>
-          //           <div class="cart__item__content__settings__delete">
-          //             <p class="deleteItem">Supprimer</p>
-          //           </div>
-          //         </div>
-          //       </div>
-          //     </article>
-          //   `;
-
-          // price = find.price * product.userProductQty;
-          // totalSum.push(price);
-
-          // quantity.push(Number(product.userProductQty));
+          evalTotal(userProductChoiceQuantity, userProductChoicePrice);
         }
-        // total = totalSum.reduce(function (a, b) {
-        //   return a + b;
-        // }
-        //);
-        // totalPrice = document.getElementById("totalPrice");
-        // totalPrice.textContent = total;
 
-        // quantityAll = quantity.reduce(function (a, b) {
-        //   return a + b;
-        //}
-        //);
-        // totalQuantity = document.getElementById("totalQuantity");
-        // totalQuantity.textContent = quantityAll;
+        // Affichage des totaux
+
+        displayTotal(sumPrice, totalQuantity);
+
       } else {
-        console.log("Absence de produit à afficher. Le LOCALSTORAGE EST VIDE.");
+
+        // Message affiché si le LOCALSTORAGE est vide
+        
+        const productCardEmpty = document.createElement('p');
+        displayCard.appendChild(productCardEmpty);
+        productCardEmpty.innerHTML = 'Votre panier est vide'        
+
       }
-      displayTotals();
+
       changeTotals();
       removeItems();
     });
 }
 displayBasket();
 
-function displayTotals() {
-  console.log("hors de la boucle");
+// Stockage du prix de chaque item en fonction de leurs quantités et stockage de la quantité
+
+function evalTotal(Qty, Price) {  
+
+  let totalPrice = (Qty * Price);
+
+  sumPrice.push(totalPrice);
+
+  totalQuantity.push(Number(Qty));
+
+  return {sumPrice, totalQuantity};
 };
 
+// affichage des totaux
+
+function displayTotal(sumPrice, totalQuantity) {
+
+  sumPrice = sumPrice.reduce(
+    (a, b) => a + b);
+  
+  totalQuantity = totalQuantity.reduce(
+    (a, b) => a + b);
+
+    const totalPriceSpan = document.getElementById('totalPrice');
+    totalPriceSpan.innerHTML = sumPrice;
+    
+    const totalQuantitySpan = document.getElementById('totalQuantity');
+    totalQuantitySpan.innerHTML = totalQuantity;
+};
+
+
+
 function changeTotals() {
-  console.log("de nouveau hors de la boucle");
+
 };
 
 function removeItems() {
-  console.log("Et une nouvelle fois hors de la boucle");
+
 };
 
 
