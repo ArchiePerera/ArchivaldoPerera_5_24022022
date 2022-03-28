@@ -3,7 +3,7 @@
 let str = new URL(window.location.href);
 let productId = str.searchParams.get("id");
 
-console.log(productId)
+// console.log(productId)
 
 //Requête vers l'API pour récupérer l'objet contenant tous les produits et leurs caractèristiques. la fonction attend la requête avant de poursuivre.
 
@@ -22,12 +22,12 @@ function getArticle(productId) {
 
       //Boucle sur le fichier Json résultant du fetch pour identifier les caractèristiques du produit en question
 
-      console.log(articles)
+      // console.log(articles)
 
       for (const article in articles) {
         //À l'identification du produit, on injecte ses caractèristiques dans la page HTML
 
-        console.log(articles[article]._id)
+        // console.log(articles[article]._id)
 
         if (articles[article]._id === productId) {
           const productImg = document.createElement("img");
