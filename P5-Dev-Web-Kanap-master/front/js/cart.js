@@ -1,6 +1,7 @@
 // Mise à disposition des éléments à appeler pour la boucle d'affichage
 
 const LOCALSTORAGE = JSON.parse(localStorage.getItem("userProducts"));
+const setLocalStorage = localStorage.setItem("userProducts", JSON.stringify(LOCALSTORAGE));
 const PRODUCTS_URL = "http://localhost:3000/api/products/";
 
 // Identification des balises d'affichages
@@ -37,14 +38,13 @@ function displayBasket() {
 
           find = articles.find((item) => item._id === product.userProductId);
 
-          // Assignation des appels au LOCALSTORAGE et de l'API dans des variablles (trop) explicites
+          // Assignation des appels au LOCALSTORAGE et de l'API dans des variables explicites
 
           let userProductChoiceId = find._id;
           let userProductChoiceColor = product.userProductColor;
           let userProductChoiceImg = find.imageUrl;
           let userProductChoiceImgAlt = find.altTxt;
           let userProductChoiceName = find.name;
-          // let userProductChoiceDescription = find.description;
           let userProductChoicePrice = find.price;
           let userProductChoiceQuantity = product.userProductQty;
 
@@ -192,7 +192,6 @@ function evalTotal(Qty, Price) {
 
 function displayTotal(sumPrice, totalQuantity) {
   sumPrice = sumPrice.reduce((a, b) => a + b);
-
   totalQuantity = totalQuantity.reduce((a, b) => a + b);
 
   const totalPriceSpan = document.getElementById("totalPrice");
@@ -202,12 +201,19 @@ function displayTotal(sumPrice, totalQuantity) {
   totalQuantitySpan.textContent = totalQuantity;
 }
 
+// Changement des totaux
+
 function changeTotal() {
+
+  //ciblage des inputs de quantité
+
   const inputQuantity = document.querySelectorAll(".itemQuantity");
 
   for (let i = 0; i < inputQuantity.length; i++) {
     let self = inputQuantity[i];
     let target = self.closest("article");
+
+    // Ecoute des inputs
 
     self.addEventListener("change", function () {
       let changingProductid = target.dataset.id;
@@ -220,26 +226,28 @@ function changeTotal() {
         ) {
           product.userProductQty = newQty;
           if (newQty != 0) {
-            localStorage.setItem("userProducts", JSON.stringify(LOCALSTORAGE));
+            setLocalStorage;
           } else {
             LOCALSTORAGE.splice(i, 1);
-            localStorage.setItem("userProducts", JSON.stringify(LOCALSTORAGE));
+            setLocalStorage;
           }
         }
       }
-      window.location.reload();
+
     });
   }
 }
 
+// Suppression d'items
+
 function removeItems() {
   const deleteProduct = document.querySelectorAll(".deleteItem");
 
-  for (let j = 0; j < deleteProduct.length; j++) {
-    let self = deleteProduct[j];
+  for (let i = 0; i < deleteProduct.length; i++) {
+    let self = deleteProduct[i];
     let target = self.closest("article");
 
-    deleteProduct[j].addEventListener("click", () => {
+    deleteProduct[i].addEventListener("click", () => {
       let deleteProductid = target.dataset.id;
       let deleteProductColor = target.dataset.color;
 
@@ -248,8 +256,8 @@ function removeItems() {
           deleteProductid === product.userProductId &&
           deleteProductColor === product.userProductColor
         ) {
-          LOCALSTORAGE.splice(j, 1);
-          localStorage.setItem("userProducts", JSON.stringify(LOCALSTORAGE));
+          LOCALSTORAGE.splice(i, 1);
+          setLocalStorage;
           if (LOCALSTORAGE.length === 0) {
             localStorage.removeItem("userProducts");
             window.location.reload();
@@ -262,15 +270,13 @@ function removeItems() {
   }
 }
 
+// Formulaire
+
 function getUserForm() {
 
   let inputs = document.querySelectorAll("input");
- 
-  // const inputs = document.querySelectorAll(
-  //   'input[type = "text"]',
-  //   'input[type = "email"]'
-  // );
 
+  // Gestion des erreurs
 
   const errorDisplay = (tag, message, valid) => {
     const displayErrorMessage = document.querySelector("#" + tag + "ErrorMsg");
@@ -280,6 +286,8 @@ function getUserForm() {
       displayErrorMessage.textContent = "";
     }
   };
+
+  // Validation des champs via comparaison Regex
 
   const firstNameChecker = (value) => {
 
@@ -366,6 +374,8 @@ function getUserForm() {
     }
   };
 
+  // Ecoute des champs
+
   inputs.forEach((input) => {
 
     input.addEventListener("input", (e) => {
@@ -397,10 +407,13 @@ function getUserForm() {
 };
 getUserForm();
 
+// Envoi d'une requête POST à l'API
+
 function postForm(){
   const orderBtn = document.getElementById("order");
 
-  //Ecouter le panier
+  //Ecouter le bouton submit
+
   orderBtn.addEventListener("click", (event)=>{
     event.preventDefault();
   
@@ -415,7 +428,7 @@ function postForm(){
           orderProducts.push(LOCALSTORAGE[i].userProductId);
       }
 
-      console.log(orderProducts)
+      // Construction de l'objet attendu par l'API
 
       const orderUserProduct = {
           contact : {
@@ -426,9 +439,9 @@ function postForm(){
               email: email.value,
           },
           products: orderProducts,
-      } 
-      
-      console.log(orderUserProduct)
+      }
+
+      // Requête POST
 
       const options = {
         method: 'POST',
@@ -442,11 +455,15 @@ function postForm(){
       fetch("http://localhost:3000/api/products/order", options)
           .then(res => res.json())
           .then(data => {
-//          localStorage.setItem('orderId', data.orderId);
+
+          // Renvoi de l'orderID dans l'URL
           document.location.href = 'confirmation.html?id=' + data.orderId;
+        })
+        .catch(function(err) {
+          console.log('Erreur fetch' + err);
         });
      
       })
-}
+};
 postForm();
 
