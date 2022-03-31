@@ -228,10 +228,16 @@ function changeTotal() {
         ) {
           product.userProductQty = newQty;
           if (newQty != 0) {
-            setLocalStorage;
+            localStorage.setItem(
+              "userProducts",
+              JSON.stringify(LOCALSTORAGE)
+            );
           } else {
             LOCALSTORAGE.splice(i, 1);
-            setLocalStorage;
+            localStorage.setItem(
+              "userProducts",
+              JSON.stringify(LOCALSTORAGE)
+            );
           }
         }
       }
@@ -258,7 +264,10 @@ function removeItems() {
           deleteProductColor === product.userProductColor
         ) {
           LOCALSTORAGE.splice(i, 1);
-          setLocalStorage;
+          localStorage.setItem(
+            "userProducts",
+            JSON.stringify(LOCALSTORAGE)
+          );
           if (LOCALSTORAGE.length === 0) {
             localStorage.removeItem("userProducts");
             window.location.reload();
