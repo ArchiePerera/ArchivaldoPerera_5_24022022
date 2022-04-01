@@ -1,10 +1,6 @@
 // Mise à disposition des éléments à appeler pour la boucle d'affichage
 
 const LOCALSTORAGE = JSON.parse(localStorage.getItem("userProducts"));
-const setLocalStorage = localStorage.setItem(
-  "userProducts",
-  JSON.stringify(LOCALSTORAGE)
-);
 const PRODUCTS_URL = "http://localhost:3000/api/products/";
 
 // Identification des balises d'affichages
@@ -103,6 +99,8 @@ function displayBasket() {
 
           const productCardContentPrice = document.createElement("p");
           productCardContentDescription.appendChild(productCardContentPrice);
+          productCardContentPrice.classList = "cart__item__content__description__price"
+          productCardContentPrice.dataset.price = userProductChoicePrice;
           productCardContentPrice.innerHTML = userProductChoicePrice + " €";
 
           // div Content Settings
@@ -198,9 +196,11 @@ function displayTotal(sumPrice, totalQuantity) {
   totalQuantity = totalQuantity.reduce((a, b) => a + b);
 
   const totalPriceSpan = document.getElementById("totalPrice");
+  totalPriceSpan.dataset.price = sumPrice;
   totalPriceSpan.textContent = sumPrice;
 
   const totalQuantitySpan = document.getElementById("totalQuantity");
+  totalQuantitySpan.dataset.qty = totalQuantity;
   totalQuantitySpan.textContent = totalQuantity;
 }
 
@@ -213,15 +213,20 @@ function changeTotal() {
 
   for (let i = 0; i < inputQuantity.length; i++) {
     let self = inputQuantity[i];
-    let target = self.closest("article");
+    const target = self.closest("article");
+    const targetPrice = document.querySelectorAll("#cart__items > article > div.cart__item__content > div > p.cart__item__content__description__price");
 
     // Ecoute des inputs
 
-    self.addEventListener("change", function () {
+    self.addEventListener("change", function() {
+
       let changingProductid = target.dataset.id;
       let changingProductColor = target.dataset.color;
       let newQty = self.value;
+      let price = targetPrice[i].dataset.price;
+
       for (product of LOCALSTORAGE) {
+
         if (
           changingProductid === product.userProductId &&
           changingProductColor === product.userProductColor
@@ -232,6 +237,7 @@ function changeTotal() {
               "userProducts",
               JSON.stringify(LOCALSTORAGE)
             );
+            location.reload();
           } else {
             LOCALSTORAGE.splice(i, 1);
             localStorage.setItem(
