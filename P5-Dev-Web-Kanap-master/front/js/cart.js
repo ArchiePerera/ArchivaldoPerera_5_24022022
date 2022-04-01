@@ -99,7 +99,8 @@ function displayBasket() {
 
           const productCardContentPrice = document.createElement("p");
           productCardContentDescription.appendChild(productCardContentPrice);
-          productCardContentPrice.classList = "cart__item__content__description__price"
+          productCardContentPrice.classList =
+            "cart__item__content__description__price";
           productCardContentPrice.dataset.price = userProductChoicePrice;
           productCardContentPrice.innerHTML = userProductChoicePrice + " €";
 
@@ -174,6 +175,9 @@ function displayBasket() {
       }
       changeTotal();
       removeItems();
+    })
+    .catch(function (err) {
+      console.log("Erreur fetch" + err);
     });
 }
 displayBasket();
@@ -214,36 +218,76 @@ function changeTotal() {
   for (let i = 0; i < inputQuantity.length; i++) {
     let self = inputQuantity[i];
     const target = self.closest("article");
-    const targetPrice = document.querySelectorAll("#cart__items > article > div.cart__item__content > div > p.cart__item__content__description__price");
+    const targetPrice = document.querySelectorAll(
+      "#cart__items > article > div.cart__item__content > div > p.cart__item__content__description__price"
+    );
 
     // Ecoute des inputs
 
-    self.addEventListener("change", function() {
-
+    self.addEventListener("change", function () {
       let changingProductid = target.dataset.id;
       let changingProductColor = target.dataset.color;
       let newQty = self.value;
       let price = targetPrice[i].dataset.price;
 
       for (product of LOCALSTORAGE) {
-
         if (
           changingProductid === product.userProductId &&
           changingProductColor === product.userProductColor
         ) {
           product.userProductQty = newQty;
           if (newQty != 0) {
-            localStorage.setItem(
-              "userProducts",
-              JSON.stringify(LOCALSTORAGE)
-            );
-            location.reload();
+            localStorage.setItem("userProducts", JSON.stringify(LOCALSTORAGE));
+            // location.reload();
+
+            //------------------------------------------------------------------------
+            let sumArray = [];
+            let sumProduct = 0;
+
+            let qtyArray = [];
+            // Appel des article des l'API en fonction des infos du LOCALSTORAGE
+            getArticles()
+              .then((catchArticles) => catchArticles.json())
+              .then(function (data) {
+                const articles = data;
+                for (product of LOCALSTORAGE) {
+                  find = articles.find(
+                    (item) => item._id === product.userProductId
+                  );
+                  //console.log(find.price * product.userProductQty);
+                  sumProduct = find.price * product.userProductQty;
+                  //console.log(sumProduct);
+                  sumArray.push(sumProduct);
+                  //console.log(product.userProductQty);
+                  qtyArray.push(Number(product.userProductQty));
+                }
+
+                //Faire un reduce et afficher dans le dom le resultat
+
+                sumArray = sumArray.reduce((a, b) => a + b);
+                qtyArray = qtyArray.reduce((a, b) => a + b);
+
+                console.log(sumArray);
+                console.log(qtyArray);
+
+                const totalPriceSpan = document.getElementById("totalPrice");
+                totalPriceSpan.dataset.price = sumArray;
+                totalPriceSpan.textContent = sumArray;
+
+                const totalQuantitySpan =
+                  document.getElementById("totalQuantity");
+                totalQuantitySpan.dataset.qty = qtyArray;
+                totalQuantitySpan.textContent = qtyArray;
+              })
+              .catch(function (err) {
+                console.log("Erreur fetch" + err);
+              });
+
+            //------------------------------------------------------------------------
           } else {
             LOCALSTORAGE.splice(i, 1);
-            localStorage.setItem(
-              "userProducts",
-              JSON.stringify(LOCALSTORAGE)
-            );
+            localStorage.setItem("userProducts", JSON.stringify(LOCALSTORAGE));
+            location.reload();
           }
         }
       }
@@ -270,10 +314,7 @@ function removeItems() {
           deleteProductColor === product.userProductColor
         ) {
           LOCALSTORAGE.splice(i, 1);
-          localStorage.setItem(
-            "userProducts",
-            JSON.stringify(LOCALSTORAGE)
-          );
+          localStorage.setItem("userProducts", JSON.stringify(LOCALSTORAGE));
           if (LOCALSTORAGE.length === 0) {
             localStorage.removeItem("userProducts");
             window.location.reload();
