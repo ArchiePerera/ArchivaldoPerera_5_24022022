@@ -5,4 +5,3 @@ const userOrderId = document.querySelector('#orderId');
 userOrderId.textContent = productId;
 
 localStorage.removeItem('userProducts');
-// localStorage.removeItem('orderId');

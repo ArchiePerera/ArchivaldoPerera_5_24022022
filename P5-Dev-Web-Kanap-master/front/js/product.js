@@ -55,8 +55,7 @@ function getArticle(productId) {
 
         } 
       }
-
-      addToCart(articles);
+      addToCart();
     })
 
     .catch(function (err) {
@@ -65,7 +64,7 @@ function getArticle(productId) {
 }
 getArticle(productId);
 
-function addToCart(articles) {
+function addToCart() {
   //Définition des champs à renseigner
 
   const addBtn = document.getElementById("addToCart");

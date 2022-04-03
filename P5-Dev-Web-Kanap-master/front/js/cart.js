@@ -488,11 +488,11 @@ function postForm() {
       };
 
       if (
-        orderUserProduct.contact.firstName.value !== undefined &&
-        orderUserProduct.contact.lastName.value !== undefined &&
-        orderUserProduct.contact.address.value !== undefined &&
-        orderUserProduct.contact.city.value !== undefined &&
-        orderUserProduct.contact.email.value !== undefined
+        orderUserProduct.contact.firstName !== "" &&
+        orderUserProduct.contact.lastName !== "" &&
+        orderUserProduct.contact.address !== "" &&
+        orderUserProduct.contact.city !== "" &&
+        orderUserProduct.contact.email !== ""
       ) {
         // Requête POST
 
@@ -504,7 +504,6 @@ function postForm() {
             "Content-Type": "application/json",
           },
         };
-
         fetch("http://localhost:3000/api/products/order", options)
           .then((res) => res.json())
           .then((data) => {
