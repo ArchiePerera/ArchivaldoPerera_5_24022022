@@ -14,6 +14,9 @@ let sumPrice = [];
 let totalQuantity = [];
 let firstName, lastName, address, city, email;
 
+const PRODUCT_URL = "http://localhost:3000/api/";
+const product= fetch(PRODUCT_URL + productID)
+
 // Appel de l'API pour rendre disponible la liste des articles
 
 async function getArticles() {

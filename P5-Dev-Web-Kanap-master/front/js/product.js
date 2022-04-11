@@ -104,6 +104,10 @@ function addToCart() {
           "userProducts",
           JSON.stringify(productLocalStorage)
         );
+        alert(
+          "C'est cool, le produit est enregistré"
+        );
+        
       } else {
         // Comportement si il existe des données dans le localStorage
 
@@ -130,6 +134,9 @@ function addToCart() {
             "userProducts",
             JSON.stringify(productLocalStorage)
           );
+          alert(
+            "C'est cool, le produit est enregistré"
+          );
         } else {
           // Dans tous les autres cas, on enregistre un nouvel objet dans le localStorage
 
@@ -138,13 +145,16 @@ function addToCart() {
             "userProducts",
             JSON.stringify(productLocalStorage)
           );
+          alert(
+            "C'est cool, le produit est enregistré"
+          );
         }
       }
 
       //Fin des conditions pour le localStorage
     } else {
       alert(
-        "Veuillez renseigner la couleur et la quantité (max: 100) du produit sélectionné"
+        "Veuillez renseigner la couleur et la quantité du produit sélectionné"
       );
     }
   });
