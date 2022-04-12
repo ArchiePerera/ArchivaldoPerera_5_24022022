@@ -14,8 +14,8 @@ let sumPrice = [];
 let totalQuantity = [];
 let firstName, lastName, address, city, email;
 
-const PRODUCT_URL = "http://localhost:3000/api/";
-const product= fetch(PRODUCT_URL + productID)
+// const PRODUCT_URL = "http://localhost:3000/api/";
+// const product= fetch(PRODUCT_URL + productID)
 
 // Appel de l'API pour rendre disponible la liste des articles
 
@@ -241,9 +241,7 @@ function changeTotal() {
           product.userProductQty = newQty;
           if (newQty != 0) {
             localStorage.setItem("userProducts", JSON.stringify(LOCALSTORAGE));
-            // location.reload();
 
-            //------------------------------------------------------------------------
             let sumArray = [];
             let sumProduct = 0;
 
@@ -286,7 +284,6 @@ function changeTotal() {
                 console.log("Erreur fetch" + err);
               });
 
-            //------------------------------------------------------------------------
           } else {
             LOCALSTORAGE.splice(i, 1);
             localStorage.setItem("userProducts", JSON.stringify(LOCALSTORAGE));
@@ -354,13 +351,16 @@ function getUserForm() {
         "firstName",
         "Le prénom doit contenir entre 2 et 20 caractères"
       );
+      firstName = null;
     } else if (!value.match(/^[a-zA-z0-9_.-]*$/)) {
       errorDisplay(
         "firstName",
         "Le prénom ne doit pas contenir de caractères spéciaux"
       );
+      firstName = null;
     } else {
       errorDisplay("firstName", "", true);
+      firstName = value;
     }
   };
 
@@ -370,13 +370,16 @@ function getUserForm() {
         "lastName",
         "Le nom de famille doit contenir entre 2 et 20 caractères"
       );
+      lastName = null;
     } else if (!value.match(/^[a-zA-z0-9_.-]*$/)) {
       errorDisplay(
         "lastName",
         "Le nom de famille ne doit pas contenir de caractères spéciaux"
       );
+      lastName = null;
     } else {
       errorDisplay("lastName", "", true);
+      lastName = value;
     }
   };
 
@@ -386,6 +389,7 @@ function getUserForm() {
         "address",
         "L'adresse doit contenir entre 2 et 20 caractères"
       );
+      address = null;
     } else if (
       !value.match(
         /^([1-9][0-9]*(?:-[1-9][0-9]*)*)[\s,-]+(?:(bis|ter|qua)[\s,-]+)?([\w]+[\-\w]*)[\s,]+([-\w].+)$/
@@ -395,8 +399,10 @@ function getUserForm() {
         "address",
         "L'adresse doit comprendre un numéro, la voie, le nom de la voie ainsi que le code postal et la ville"
       );
+      address = null;
     } else {
       errorDisplay("address", "", true);
+      address = value;
     }
   };
 
@@ -406,21 +412,26 @@ function getUserForm() {
         "city",
         "Le nom de la ville doit contenir entre 2 et 20 caractères"
       );
+      city = null;
     } else if (!value.match(/^[a-zA-z0-9_.-]*$/)) {
       errorDisplay(
         "city",
         "Le nom de la ville ne doit pas contenir de caractères spéciaux"
       );
+      city = null;
     } else {
       errorDisplay("city", "", true);
+      city = value;
     }
   };
 
   const emailChecker = (value) => {
     if (!value.match(/^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i)) {
       errorDisplay("email", "Le mail n'est pas valide");
+      email = null;
     } else {
       errorDisplay("email", "", true);
+      email = value;
     }
   };
 
@@ -466,12 +477,6 @@ function postForm() {
     event.preventDefault();
 
     if (LOCALSTORAGE !== null) {
-      let firstName = document.getElementById("firstName");
-      let lastName = document.getElementById("lastName");
-      let address = document.getElementById("address");
-      let city = document.getElementById("city");
-      let email = document.getElementById("email");
-
       let orderProducts = [];
       for (let i = 0; i < LOCALSTORAGE.length; i++) {
         orderProducts.push(LOCALSTORAGE[i].userProductId);
@@ -479,24 +484,18 @@ function postForm() {
 
       // Construction de l'objet attendu par l'API
 
-      const orderUserProduct = {
-        contact: {
-          firstName: firstName.value,
-          lastName: lastName.value,
-          address: address.value,
-          city: city.value,
-          email: email.value,
-        },
-        products: orderProducts,
-      };
+      if (firstName && lastName && address && city && email) {
+        const orderUserProduct = {
+          contact: {
+            firstName: firstName,
+            lastName: lastName,
+            address: address,
+            city: city,
+            email: email,
+          },
+          products: orderProducts,
+        };
 
-      if (
-        orderUserProduct.contact.firstName !== "" &&
-        orderUserProduct.contact.lastName !== "" &&
-        orderUserProduct.contact.address !== "" &&
-        orderUserProduct.contact.city !== "" &&
-        orderUserProduct.contact.email !== ""
-      ) {
         // Requête POST
 
         const options = {
