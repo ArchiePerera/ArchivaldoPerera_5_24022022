@@ -3,66 +3,53 @@
 let str = new URL(window.location.href);
 let productId = str.searchParams.get("id");
 
-// console.log(productId)
-
 //Requête vers l'API pour récupérer l'objet contenant tous les produits et leurs caractèristiques. la fonction attend la requête avant de poursuivre.
 
-async function getArticles() {
-  const catchArticles = await fetch("http://localhost:3000/api/products/");
-  return catchArticles;
+const PRODUCTS_URL = "http://localhost:3000/api/products/";
+
+async function getArticle(productId) {
+  const catchArticles = await fetch(PRODUCTS_URL + productId)
+    .then((catchArticles) => catchArticles.json())
+    .then(function (data) {
+      article = data;
+    })
+    .catch(function (err) {
+      console.log("Erreur fetch" + err);
+    });
+  return article;
 }
 
 //Appel de la fonction de la requête asynchrone et, une fois éxécutée, interprétation des données promises en Json.
 
-function getArticle(productId) {
-  getArticles()
-    .then((catchArticles) => catchArticles.json())
-    .then(function (data) {
-      const articles = data;
+async function displayArticle(productId) {
+  const article = await getArticle(productId);
 
-      //Boucle sur le fichier Json résultant du fetch pour identifier les caractèristiques du produit en question
+  const productImg = document.createElement("img");
+  document.querySelector(".item__img").appendChild(productImg);
+  productImg.src = article.imageUrl;
+  productImg.alt = article.altTxt;
 
-      // console.log(articles)
+  const productTitle = document.getElementById("title");
+  productTitle.innerHTML = article.name;
 
-      for (const article in articles) {
-        //À l'identification du produit, on injecte ses caractèristiques dans la page HTML
+  const productPrice = document.getElementById("price");
+  productPrice.innerHTML = article.price;
 
-        // console.log(articles[article]._id)
+  const productDescription = document.getElementById("description");
+  productDescription.innerHTML = article.description;
 
-        if (articles[article]._id === productId) {
-          const productImg = document.createElement("img");
-          document.querySelector(".item__img").appendChild(productImg);
-          productImg.src = articles[article].imageUrl;
-          productImg.alt = articles[article].altTxt;
+  //Boucle pour les couleurs disponibles du produit
 
-          const productTitle = document.getElementById("title");
-          productTitle.innerHTML = articles[article].name;
+  for (color of article.colors) {
+    const productColors = document.createElement("option");
+    document.querySelector("#colors").appendChild(productColors);
+    productColors.value = color;
+    productColors.innerHTML = color;
+  }
 
-          const productPrice = document.getElementById("price");
-          productPrice.innerHTML = articles[article].price;
-
-          const productDescription = document.getElementById("description");
-          productDescription.innerHTML = articles[article].description;
-
-          //Boucle pour les couleurs disponibles du produit
-
-          for (color of articles[article].colors) {
-            const productColors = document.createElement("option");
-            document.querySelector("#colors").appendChild(productColors);
-            productColors.value = color;
-            productColors.innerHTML = color;
-          }
-
-        } 
-      }
-      addToCart();
-    })
-
-    .catch(function (err) {
-      console.log("Erreur fetch" + err);
-    });
+  addToCart();
 }
-getArticle(productId);
+displayArticle(productId);
 
 function addToCart() {
   //Définition des champs à renseigner
@@ -104,10 +91,7 @@ function addToCart() {
           "userProducts",
           JSON.stringify(productLocalStorage)
         );
-        alert(
-          "C'est cool, le produit est enregistré"
-        );
-        
+        alert("C'est cool, le produit est enregistré");
       } else {
         // Comportement si il existe des données dans le localStorage
 
@@ -134,9 +118,7 @@ function addToCart() {
             "userProducts",
             JSON.stringify(productLocalStorage)
           );
-          alert(
-            "C'est cool, le produit est enregistré"
-          );
+          alert("C'est cool, le produit est enregistré");
         } else {
           // Dans tous les autres cas, on enregistre un nouvel objet dans le localStorage
 
@@ -145,9 +127,7 @@ function addToCart() {
             "userProducts",
             JSON.stringify(productLocalStorage)
           );
-          alert(
-            "C'est cool, le produit est enregistré"
-          );
+          alert("C'est cool, le produit est enregistré");
         }
       }
 
