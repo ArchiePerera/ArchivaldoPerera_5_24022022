@@ -241,11 +241,8 @@ function changeTotal() {
             let qtyArray = [];
 
             for (product of LOCALSTORAGE) {
-              console.log(find.price * product.userProductQty);
               sumProduct = article.price * product.userProductQty;
-
               sumArray.push(sumProduct);
-
               qtyArray.push(Number(product.userProductQty));
             }
 
@@ -262,7 +259,11 @@ function changeTotal() {
             totalQuantitySpan.dataset.qty = qtyArray;
             totalQuantitySpan.textContent = qtyArray;
           } else if (newQty == 0) {
-            console.log("efface moi ça");
+            LOCALSTORAGE.splice(LOCALSTORAGE.indexOf(product), 1)
+            localStorage.setItem("userProducts", JSON.stringify(LOCALSTORAGE))
+            location.reload();
+          } else {
+            alert("Votre panier est vide")
           }
         }
       }
